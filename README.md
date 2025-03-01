@@ -1,2 +1,3 @@
 # Web_Technologies_EMMT
-Web Technologies (7CC005)_Preparations for Tutorials 
+Web Technologies (7CC005)_Tutorials for GitHub
+Eaint Mie Mie Thant @Maruko
