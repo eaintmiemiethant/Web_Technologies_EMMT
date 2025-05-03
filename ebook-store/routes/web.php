@@ -1,8 +1,12 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BrowseController;
+use App\Http\Controllers\EbookController;
+use App\Http\Controllers\EbookDownloadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,11 +18,14 @@ Route::get('/', function () {
     return Inertia::render('LandingPage');
 });
 
-// Breeze / Inertia auth routes: /login, /register, /forgot-password, /reset-password, /verify-email, /logout
+Route::get('/browse', [BrowseController::class, 'index'])
+     ->name('browse');
+
+Route::get('/ebooks/{ebook}', [EbookController::class, 'show'])
+     ->name('ebooks.show');
+
+// Breeze / Inertia auth routes
 require __DIR__ . '/auth.php';
-
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -40,4 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])
          ->name('profile.destroy');
+
+    // E-Book download (requires login & purchase-check later)
+    Route::get('/ebooks/{ebook}/download', [EbookDownloadController::class, 'download'])
+         ->name('ebooks.download');
 });

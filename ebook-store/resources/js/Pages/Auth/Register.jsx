@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-
+import AppLayout from '@/Layouts/AppLayout';
 export default function Register() {
   const { data, setData, post, processing, errors, reset } = useForm({
     name: '',
@@ -149,3 +149,4 @@ export default function Register() {
     </>
   );
 }
+Register.layout = page => <AppLayout>{page}</AppLayout>;

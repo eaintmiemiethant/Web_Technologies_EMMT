@@ -1,0 +1,98 @@
+import React from 'react';
+import { Inertia } from '@inertiajs/inertia';
+import { Link } from '@inertiajs/inertia-react';
+import AppLayout from '@/Layouts/AppLayout';
+
+export default function Browse(props) {
+  // Debug props
+  console.log('Browse props:', props);
+
+  // Destructure with safe defaults
+  const {
+    categories = [],
+    ebooks = { data: [], links: [] },
+    selectedCategory = ''
+  } = props;
+
+  // Handle category filter change
+  function onCategoryChange(e) {
+    const category = e.target.value;
+    Inertia.get(route('browse'), { category }, { preserveState: true });
+  }
+
+  return (
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">Browse e-Books</h1>
+
+      {/* Category Filter */}
+      <div className="mb-6">
+        <select
+          value={selectedCategory}
+          onChange={onCategoryChange}
+          className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          <option value="">All Categories</option>
+          {categories.map(cat => (
+            <option key={cat.id} value={cat.slug}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* E-Book Grid or Empty State */}
+      {ebooks.data.length > 0 ? (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {ebooks.data.map(book => (
+            <div
+              key={book.id}
+              className="bg-white rounded-lg shadow hover:shadow-lg transition p-4 flex flex-col"
+            >
+              {book.cover_image && (
+                <img
+                  src={book.cover_image}
+                  alt={book.title}
+                  className="h-48 w-full object-cover rounded mb-4"
+                />
+              )}
+              <h2 className="font-semibold text-lg mb-1">{book.title}</h2>
+              <p className="text-sm text-gray-600 mb-2">{book.author}</p>
+              <p className="font-bold text-primary mb-4">
+                {Number(book.price) === 0 ? 'Free' : `$${Number(book.price).toFixed(2)}` }
+              </p>
+              <Link
+                href={route('ebooks.show', book.id)}
+                className="mt-auto text-center bg-primary text-white py-2 rounded hover:bg-primary-dark transition"
+              >
+                View Details
+              </Link>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-center text-gray-500">No books found.</p>
+      )}
+
+      {/* Pagination */}
+      {ebooks.links.length > 0 && (
+        <div className="mt-8 flex justify-center space-x-2">
+          {ebooks.links.map((link, idx) => (
+            <button
+              key={idx}
+              onClick={() => link.url && Inertia.get(link.url, {}, { preserveState: true })}
+              disabled={!link.url}
+              className={`px-3 py-1 border rounded ${
+                link.active
+                  ? 'bg-primary text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
+              } disabled:opacity-50`}
+            >
+              <span dangerouslySetInnerHTML={{ __html: link.label }} />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+Browse.layout = page => <AppLayout>{page}</AppLayout>;
