@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { BookOpenIcon, ShoppingCartIcon, UserGroupIcon, GiftIcon, ArrowDownTrayIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import { Link } from '@inertiajs/react';
+import {
+  BookOpenIcon,
+  ShoppingCartIcon,
+  UserGroupIcon,
+  GiftIcon,
+  ArrowDownTrayIcon,
+  LockClosedIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
+} from "@heroicons/react/24/outline";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 
@@ -7,105 +17,153 @@ export default function LandingPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
-    slideChanged(slider) {
-      setCurrentSlide(slider.track.details.rel);
+    slideChanged(s) {
+      setCurrentSlide(s.track.details.rel);
     },
-    slides: { perView: 1 },
+    slides: { perView: 1 }
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-100 to-purple-200">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navbar */}
-      <header className="flex justify-between items-center p-6">
-        <h1 className="text-3xl font-bold text-indigo-800">BookNest 📚</h1>
-        <nav className="space-x-6">
-          <a href="#features" className="text-indigo-600 hover:text-indigo-800">Features</a>
-          <a href="#explore" className="text-indigo-600 hover:text-indigo-800">Explore</a>
-          <a href="#contact" className="text-indigo-600 hover:text-indigo-800">Contact</a>
-        </nav>
+      <header className="bg-white shadow-md">
+        <div className="container mx-auto flex justify-between items-center py-4 px-6">
+          <Link href="/">
+            <img
+              src="/storage/img/logo.png"
+              alt="ByteBooks Logo"
+              className="h-20"
+            />
+          </Link>
+          <nav className="space-x-4 flex items-center">
+            <Link href="/login" className="text-gray-600 hover:text-primary">Login</Link>
+            <Link
+              href="/register"
+              className="ml-4 bg-primary text-white px-4 py-2 rounded-full hover:bg-primary-dark transition"
+            >
+              Sign Up
+            </Link>
+          </nav>
+        </div>
       </header>
 
-      {/* Hero Section with Best Seller + News Slider */}
-      <div className="relative w-full">
-        <div ref={sliderRef} className="keen-slider h-[70vh] w-full">
-          {/* Slide 1 - Best Seller */}
-          <div className="keen-slider__slide flex flex-col justify-center items-center text-center bg-white max-w-4xl mx-auto px-8 py-10 rounded-2xl shadow-xl p-8">
-            <h2 className="text-5xl font-bold text-indigo-800 mb-4">🔥 Best Seller: Atomic Habits</h2>
-            <p className="text-lg text-gray-700 max-w-xl">
-              Transform your life with small habits! The #1 Bestseller by James Clear.
-            </p>
-          </div>
-
-          {/* Slide 2 - News */}
-          <div className="keen-slider__slide flex flex-col justify-center items-center text-center bg-white max-w-4xl mx-auto px-8 py-10 rounded-2xl shadow-xl p-8">
-            <h2 className="text-5xl font-bold text-indigo-800 mb-4">📰 Latest News: Book Fair 2025!</h2>
-            <p className="text-lg text-gray-700 max-w-xl">
-              Discover exclusive book releases and meet your favorite authors live!
-            </p>
-          </div>
-
-          {/* Slide 3 - Another Best Seller */}
-          <div className="keen-slider__slide flex flex-col justify-center items-center text-center bg-white max-w-4xl mx-auto px-8 py-10 rounded-2xl shadow-xl p-8">
-            <h2 className="text-5xl font-bold text-indigo-800 mb-4">🌟 Bestseller: The Alchemist</h2>
-            <p className="text-lg text-gray-700 max-w-xl">
-              Follow your dreams and explore destiny with Paulo Coelho’s timeless classic.
-            </p>
-          </div>
+      {/* Hero Slider */}
+      <div className="relative">
+        <div ref={sliderRef} className="keen-slider h-[60vh]">
+          {[
+            { title: "Atomic Habits", subtitle: "Build better habits every day.", cta: "Shop Now" },
+            { title: "The Alchemist", subtitle: "Discover your destiny.", cta: "Explore" },
+            { title: "Book Fair 2025", subtitle: "Join the biggest event of the year.", cta: "Learn More" }
+          ].map((slide, idx) => (
+            <div
+              key={idx}
+              className="keen-slider__slide flex items-center justify-center bg-gradient-to-r from-primary/20 to-purple-300"
+            >
+              <div className="text-center px-6">
+                <h2 className="text-4xl md:text-5xl font-extrabold text-primary mb-2">
+                  {slide.title}
+                </h2>
+                <p className="text-lg text-primary/80 mb-6">{slide.subtitle}</p>
+                <button className="bg-primary text-white px-6 py-3 rounded-full hover:bg-primary-dark transition">
+                  {slide.cta}
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-
         {/* Arrows */}
-        <button onClick={() => instanceRef.current?.prev()} className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-indigo-100">‹</button>
-        <button onClick={() => instanceRef.current?.next()} className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-indigo-100">›</button>
-
+        <button
+          onClick={() => instanceRef.current?.prev()}
+          className="absolute left-4 top-1/2 bg-white p-2 rounded-full shadow-md hover:bg-primary/20 transform -translate-y-1/2"
+        >
+          <ChevronLeftIcon className="h-6 w-6 text-primary" />
+        </button>
+        <button
+          onClick={() => instanceRef.current?.next()}
+          className="absolute right-4 top-1/2 bg-white p-2 rounded-full shadow-md hover:bg-primary/20 transform -translate-y-1/2"
+        >
+          <ChevronRightIcon className="h-6 w-6 text-primary" />
+        </button>
         {/* Dots */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-          {[...Array(instanceRef.current?.track.details.slides.length || 0)].map((_, idx) => (
+        <div className="absolute bottom-4 left-1/2 flex space-x-2 transform -translate-x-1/2">
+          {[0, 1, 2].map((_, idx) => (
             <button
               key={idx}
               onClick={() => instanceRef.current?.moveToIdx(idx)}
-              className={`w-3 h-3 rounded-full ${currentSlide === idx ? 'bg-indigo-600' : 'bg-gray-300'}`}
-            ></button>
+              className={`w-3 h-3 rounded-full ${
+                currentSlide === idx ? 'bg-primary' : 'bg-gray-300'
+              }`}
+            />
           ))}
         </div>
       </div>
 
+      {/* Best Sellers Section */}
+      <section id="best-sellers" className="container mx-auto py-12 px-6">
+        <h2 className="text-3xl font-bold text-gray-800 mb-6">Best Sellers</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { name: "Atomic Habits", price: "$12.99" },
+            { name: "The Alchemist", price: "$9.99" },
+            { name: "Deep Work", price: "$14.99" },
+            { name: "1984", price: "$8.99" }
+          ].map((book, idx) => (
+            <div key={idx} className="bg-white rounded-2xl shadow-md p-4 flex flex-col">
+              <div className="h-40 bg-primary/10 rounded-lg mb-4 flex items-center justify-center">
+                <BookOpenIcon className="h-10 w-10 text-primary" />
+              </div>
+              <h3 className="font-semibold text-gray-800 mb-2">{book.name}</h3>
+              <p className="text-primary font-bold mb-4">{book.price}</p>
+              <button className="mt-auto bg-primary text-white px-4 py-2 rounded-full hover:bg-primary-dark transition flex items-center justify-center gap-2">
+                <ShoppingCartIcon className="h-5 w-5" /> Add to Cart
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section id="features" className="p-10 grid md:grid-cols-3 gap-8 text-center">
-        <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition">
-          <LockClosedIcon className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
-          <h3 className="text-xl font-bold mb-2">Secure Authentication</h3>
-          <p className="text-gray-600">Register and log in securely using modern authentication systems.</p>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition">
-          <BookOpenIcon className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
-          <h3 className="text-xl font-bold mb-2">Preview Before Purchase</h3>
-          <p className="text-gray-600">Get a sneak peek of e-books before buying them.</p>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition">
-          <ShoppingCartIcon className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
-          <h3 className="text-xl font-bold mb-2">Seamless Checkout</h3>
-          <p className="text-gray-600">Smooth cart and payment integration styled with Tailwind CSS.</p>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition">
-          <UserGroupIcon className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
-          <h3 className="text-xl font-bold mb-2">Personal Library</h3>
-          <p className="text-gray-600">Keep track of all your purchases and downloads in one place.</p>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition">
-          <ArrowDownTrayIcon className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
-          <h3 className="text-xl font-bold mb-2">Instant Downloads</h3>
-          <p className="text-gray-600">Access your e-books immediately after payment confirmation.</p>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition">
-          <GiftIcon className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
-          <h3 className="text-xl font-bold mb-2">Exclusive Promotions</h3>
-          <p className="text-gray-600">Take advantage of promo codes and exclusive e-book sales.</p>
+      <section id="features" className="bg-white py-12 px-6">
+        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Features</h2>
+        <div className="container mx-auto grid md:grid-cols-3 gap-8">
+          <div className="flex flex-col items-center text-center p-6">
+            <LockClosedIcon className="h-12 w-12 text-primary mb-4" />
+            <h3 className="font-semibold text-gray-800 mb-2">Secure Login</h3>
+            <p className="text-gray-600">Protected by modern encryption and JWT tokens.</p>
+          </div>
+          <div className="flex flex-col items-center text-center p-6">
+            <BookOpenIcon className="h-12 w-12 text-primary mb-4" />
+            <h3 className="font-semibold text-gray-800 mb-2">Preview Books</h3>
+            <p className="text-gray-600">Sample the first chapters before buying.</p>
+          </div>
+          <div className="flex flex-col items-center text-center p-6">
+            <ShoppingCartIcon className="h-12 w-12 text-primary mb-4" />
+            <h3 className="font-semibold text-gray-800 mb-2">Easy Checkout</h3>
+            <p className="text-gray-600">Seamless payment flow with Stripe & PayPal.</p>
+          </div>
+          <div className="flex flex-col items-center text-center p-6">
+            <UserGroupIcon className="h-12 w-12 text-primary mb-4" />
+            <h3 className="font-semibold text-gray-800 mb-2">My Library</h3>
+            <p className="text-gray-600">All your purchases in one personal space.</p>
+          </div>
+          <div className="flex flex-col items-center text-center p-6">
+            <ArrowDownTrayIcon className="h-12 w-12 text-primary mb-4" />
+            <h3 className="font-semibold text-gray-800 mb-2">Instant Download</h3>
+            <p className="text-gray-600">Get your e-book immediately after purchase.</p>
+          </div>
+          <div className="flex flex-col items-center text-center p-6">
+            <GiftIcon className="h-12 w-12 text-primary mb-4" />
+            <h3 className="font-semibold text-gray-800 mb-2">Exclusive Deals</h3>
+            <p className="text-gray-600">Limited-time promotions and discounts.</p>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="text-center p-6 bg-indigo-100">
-        <p className="text-gray-600">&copy; {new Date().getFullYear()} BookNest. All rights reserved.</p>
+      <footer className="bg-gray-800 text-gray-400 py-6">
+        <div className="container mx-auto text-center">
+          &copy; {new Date().getFullYear()} ByteBooks. All Rights Reserved.
+        </div>
       </footer>
     </div>
   );
