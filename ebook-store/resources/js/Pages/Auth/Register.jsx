@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import AppLayout from '@/Layouts/AppLayout';
+import AppLayout from '@/Layouts/MainLayout';
 export default function Register() {
   const { data, setData, post, processing, errors, reset } = useForm({
     name: '',

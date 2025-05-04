@@ -27,6 +27,7 @@
         "@inertiajs/inertia-react": "^0.8.1",
         "keen-slider": "^6.8.6",
         "prop-types": "^15.8.1",
-        "react-awesome-slider": "^4.1.0"
+        "react-awesome-slider": "^4.1.0",
+        "ziggy-js": "^2.5.2"
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import AppLayout from '@/Layouts/AppLayout';
+import GuestLayout from '@/Layouts/GuestLayout'; 
 
 export default function Login({ status, canResetPassword }) {
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -134,4 +134,5 @@ export default function Login({ status, canResetPassword }) {
     </>
   );
 }
-Login.layout = page => <AppLayout>{page}</AppLayout>;
+
+Login.layout = page => <GuestLayout>{page}</GuestLayout>
