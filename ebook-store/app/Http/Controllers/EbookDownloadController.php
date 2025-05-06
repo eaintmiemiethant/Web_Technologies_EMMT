@@ -3,30 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Ebook;
-use Illuminate\Support\Str;
+use App\Models\OrderItem;
 
 class EbookDownloadController extends Controller
 {
     /**
-     * Stream the e-book file to the user, after enforcing purchase.
+     * Redirect the user straight to the public PDF/EPUB URL after verifying purchase.
      */
     public function download(Request $request, Ebook $ebook)
     {
         $user = $request->user();
 
-        // 1) Check if the user has purchased this e-book
-        if (! $user->purchasedEbooks()->where('ebook_id', $ebook->id)->exists()) {
-            // If you don't have a pivot table yet, replace the above with your purchase-check logic
+        // Check for a paid order containing this ebook
+        $hasBought = OrderItem::where('ebook_id', $ebook->id)
+            ->whereHas('order', fn($q) => $q
+                ->where('user_id', $user->id)
+                ->where('status', 'paid')
+            )
+            ->exists();
+
+        if (! $hasBought) {
             abort(403, 'You must purchase this e-book before downloading.');
         }
 
-        // 2) Stream the file from storage
-        $diskPath = $ebook->file_path;
-        $filename = Str::slug($ebook->title) . '.pdf';
+        // Build the Gutenberg PDF (or EPUB) URL
+        $id   = $ebook->id;
+        $pdf  = "https://www.gutenberg.org/cache/epub/{$id}/pg{$id}.pdf";
+        $epub = "https://www.gutenberg.org/cache/epub/{$id}/pg{$id}.epub";
 
-        return Storage::disk('public')
-                      ->download($diskPath, $filename);
+        // Choose whichever you prefer—here, PDF by default
+        $downloadUrl = $pdf;
+
+        // Redirect the browser straight to the remote file
+        return redirect()->away($downloadUrl);
     }
 }

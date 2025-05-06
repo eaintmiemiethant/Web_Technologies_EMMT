@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\OrderItem;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_admin',
     ];
 
     /**
@@ -45,7 +47,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
+    public function isAdmin(): bool
+    {
+        return $this->is_admin;
+    }
     public function cartItems()
     {
         return $this->hasMany(CartItem::class);
@@ -54,5 +59,22 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+      /**
+     * All ebooks that this user has purchased (via paid orders).
+     */
+    public function purchasedEbooks()
+    {
+        return $this->hasManyThrough(
+            Ebook::class,       // final model
+            OrderItem::class,   // intermediate pivot
+            'order_id',         // OrderItem -> order primary key
+            'id',               // Ebook -> id
+            'id',               // User -> id (local key)
+            'ebook_id'          // OrderItem -> ebook_id (second local key)
+        )->whereHas('order', function($q) {
+            $q->where('user_id', $this->id)
+              ->where('status', 'paid');
+        });
     }
 }

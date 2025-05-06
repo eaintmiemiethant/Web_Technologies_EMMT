@@ -1,74 +1,79 @@
 <?php
 
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\EbookController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\BrowseController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\EbookDownloadController;
+use Inertia\Inertia;
+use App\Http\Controllers\{
+    BrowseController,
+    EbookController,
+    EbookDownloadController,
+    CartController,
+    CheckoutController,
+    OrderController,
+    ProfileController
+};
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\EbookController as AdminEbookController;
+use App\Http\Middleware\Admin;
+use App\Http\Controllers\LandingPageController;
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/', function () {
-     return Inertia::render('LandingPage');
-});
+// Public (no login required)
+// Route::get('/', fn() => Inertia::render('LandingPage'))
+//     ->name('landing');
+Route::get('/', [LandingPageController::class, 'index'])
+     ->name('landing');
 
 Route::get('/browse', [BrowseController::class, 'index'])
-     ->name('browse');
+    ->name('browse');
 
 Route::get('/ebooks/{ebook}', [EbookController::class, 'show'])
-     ->name('ebooks.show');
+    ->name('ebooks.show');
 
-// Breeze / Inertia auth routes
-require __DIR__ . '/auth.php';
+// Breeze / Inertia Auth (login, register, password reset, etc.)
+require __DIR__.'/auth.php';
 
-/*
-|--------------------------------------------------------------------------
-| Authenticated Routes
-|--------------------------------------------------------------------------
-*/
+// Authenticated (login + email-verified required)
 Route::middleware(['auth', 'verified'])->group(function () {
-     // Dashboard Inertia page
-     Route::get('/dashboard', function () {
-          return Inertia::render('Dashboard');
-     })->name('dashboard');
 
-     // Profile pages
-     Route::get('/profile', [ProfileController::class, 'edit'])
-          ->name('profile.edit');
+    // Admin & authorization
+    //  - must be logged in, verified, and pass your 'admin' middleware
+    Route::prefix('admin')
+         ->middleware(Admin::class)
+         ->name('admin.')
+         ->group(function () {
+             Route::resource('users', UserController::class)
+                  ->only(['index','edit','update','destroy']);
+             Route::resource('ebooks', AdminEbookController::class)
+             ->only(['index','create','store','edit','update','destroy']);
+         });
 
-     Route::patch('/profile', [ProfileController::class, 'update'])
-          ->name('profile.update');
+    // Dashboard
+    Route::get('/dashboard', fn() => Inertia::render('Dashboard'))
+         ->name('dashboard');
 
-     Route::delete('/profile', [ProfileController::class, 'destroy'])
-          ->name('profile.destroy');
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])
+         ->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])
+         ->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+         ->name('profile.destroy');
 
-     // E-Book download (requires login & purchase-check later)
-     Route::get('/ebooks/{ebook}/download', [EbookDownloadController::class, 'download'])
-          ->name('ebooks.download');
-     // Cart
-     Route::get('/cart',          [CartController::class, 'index'])->name('cart.index');
-     Route::post('/cart',         [CartController::class, 'store'])->name('cart.store');
-     Route::patch('/cart/{cartItem}', [CartController::class, 'update'])->name('cart.update');
-     Route::delete('/cart/{cartItem}', [CartController::class, 'destroy'])->name('cart.destroy');
+    // Download purchased ebook
+    Route::get('/ebooks/{ebook}/download', [EbookDownloadController::class, 'download'])
+         ->name('ebooks.download');
 
-     // Checkout
-     Route::get('/checkout',      [CheckoutController::class, 'index'])->name('checkout.index');
-     Route::post('/checkout',     [CheckoutController::class, 'store'])->name('checkout.store');
+    // Shopping Cart
+    Route::get('/cart',    [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart',   [CartController::class, 'store'])->name('cart.store');
+    Route::patch('/cart/{cartItem}',   [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{cartItem}',  [CartController::class, 'destroy'])->name('cart.destroy');
 
-     // List all orders
-     Route::get('/orders', [OrderController::class, 'index'])
-          ->name('orders.index');
+    // Checkout
+    Route::get('/checkout',  [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
-     // Show a specific order
-     Route::get('/orders/{order}', [OrderController::class, 'show'])
-          ->name('orders.show');
+    // Orders
+    Route::get('/orders',         [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 });
+
