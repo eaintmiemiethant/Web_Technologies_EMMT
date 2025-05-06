@@ -11,25 +11,24 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        // Paginated list of users
-        $users = User::orderBy('created_at','desc')
+        $sort      = $request->input('sort', 'id');
+        $direction = $request->input('direction', 'asc');
+
+        $users = User::orderBy($sort, $direction)
             ->paginate(15)
-            // Map each user into a simple array for Inertia
+            ->appends(compact('sort', 'direction'))
             ->through(fn($u) => [
                 'id'         => $u->id,
                 'name'       => $u->name,
                 'email'      => $u->email,
-                'is_admin'   => (bool) $u->is_admin,
+                'is_admin'   => $u->is_admin,
                 'created_at' => $u->created_at->toDateTimeString(),
             ]);
 
         return Inertia::render('Admin/Users/Index', [
-            'users' => $users,
-            // Pass along any flash messages
-            'flash' => [
-                'success' => session('success'),
-                'error'   => session('error'),
-            ],
+            'users'     => $users,
+            'sort'      => $sort,
+            'direction' => $direction,
         ]);
     }
 
@@ -53,7 +52,7 @@ class UserController extends Controller
     {
         $data = $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email,'.$user->id,
+            'email'    => 'required|email|unique:users,email,' . $user->id,
             'is_admin' => 'boolean',
         ]);
 

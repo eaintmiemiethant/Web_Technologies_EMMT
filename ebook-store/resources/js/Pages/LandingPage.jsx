@@ -127,7 +127,7 @@ export default function LandingPage() {
         <h2 className="mb-8 text-center text-3xl font-bold text-gray-800">
           Features
         </h2>
-        <div className="container mx-auto grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-6">
+        <div className="container mx-auto grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-5">
           {features.map((f) => {
             const Icon = {
               LockClosedIcon,
@@ -135,7 +135,7 @@ export default function LandingPage() {
               ShoppingCartIcon,
               UserGroupIcon,
               ArrowDownTrayIcon,
-              GiftIcon,
+            //   GiftIcon,
             }[f.icon];
             return (
               <div

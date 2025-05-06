@@ -64,11 +64,11 @@ class LandingPageController extends Controller
                 'title'       => 'Instant Download',
                 'description' => 'Get your e-book immediately after purchase.',
             ],
-            [
-                'icon'        => 'GiftIcon',
-                'title'       => 'Exclusive Deals',
-                'description' => 'Limited-time promotions and discounts.',
-            ],
+            // [
+            //     'icon'        => 'GiftIcon',
+            //     'title'       => 'Exclusive Deals',
+            //     'description' => 'Limited-time promotions and discounts.',
+            // ],
         ];
 
         // 4) Render landing page with every section
