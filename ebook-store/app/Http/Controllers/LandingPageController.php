@@ -52,7 +52,7 @@ class LandingPageController extends Controller
             [
                 'icon'        => 'ShoppingCartIcon',
                 'title'       => 'Easy Checkout',
-                'description' => 'Seamless payment flow with Stripe & PayPal.',
+                'description' => 'Seamless payment flow with Stripe.',
             ],
             [
                 'icon'        => 'UserGroupIcon',

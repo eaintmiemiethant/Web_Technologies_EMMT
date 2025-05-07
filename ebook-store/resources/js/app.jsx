@@ -15,11 +15,9 @@ createInertiaApp({
   // Title builder
   title: (title) => (title ? `${title} - ${appName}` : appName),
 
-  // How to resolve page components
   resolve: (name) => {
     const pages = import.meta.glob('./Pages/**/*.jsx')
     return resolvePageComponent(`./Pages/${name}.jsx`, pages).then((module) => {
-      // If the page has no layout, wrap it in MainLayout
       if (!module.default.layout) {
         module.default.layout = (page, props) => (
           <MainLayout auth={props.auth}>{page}</MainLayout>
