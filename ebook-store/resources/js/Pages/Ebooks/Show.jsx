@@ -1,16 +1,17 @@
 // resources/js/Pages/Ebooks/Show.jsx
 
 import React, { useState } from "react";
-import { Inertia } from "@inertiajs/inertia";
-import { Link } from "@inertiajs/inertia-react";
+import { Inertia } from '@inertiajs/inertia'
+import { router, Link, usePage } from '@inertiajs/react'   
 import MainLayout from "@/Layouts/MainLayout";
 import { ShoppingCartIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+
 
 export default function Show({ ebook }) {
   const [showModal, setShowModal] = useState(false);
 
   const handleAddToCart = () => {
-    Inertia.post(
+    router.post(
       route("cart.store"),
       { ebook_id: ebook.id },
       {

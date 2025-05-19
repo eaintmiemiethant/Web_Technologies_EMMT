@@ -9,6 +9,9 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
+use Stripe\Webhook;
+use Stripe\Exception\SignatureVerificationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class CheckoutController extends Controller
 {
@@ -119,5 +122,29 @@ class CheckoutController extends Controller
         return redirect()
             ->route('orders.show', $newOrderId)
             ->with('success', 'Payment successful & order placed!');
+    }
+
+    public function webhook(Request $request): Response
+    {
+        $payload   = $request->getContent();
+        $sigHeader = $request->header('Stripe-Signature');
+        $secret    = config('services.stripe.webhook_secret');
+
+        try {
+            $event = Webhook::constructEvent($payload, $sigHeader, $secret);
+
+            // === handle only the events you care about ===
+            if ($event->type === 'payment_intent.succeeded') {
+                /** @var \Stripe\PaymentIntent $pi */
+                $pi = $event->data->object;
+                
+            }
+
+            // 204 = “received & no body”
+            return response()->noContent();
+        } catch (SignatureVerificationException $e) {
+            // 400 signals Stripe “please retry later”
+            return response('Invalid signature', Response::HTTP_BAD_REQUEST);
+        }
     }
 }

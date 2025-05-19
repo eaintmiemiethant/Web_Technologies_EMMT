@@ -159,6 +159,7 @@ export default function Checkout() {
           .querySelector('meta[name="csrf-token"]')
           .getAttribute('content'),
       },
+      body: JSON.stringify({}), 
     })
       .then((r) => r.json())
       .then((data) => {

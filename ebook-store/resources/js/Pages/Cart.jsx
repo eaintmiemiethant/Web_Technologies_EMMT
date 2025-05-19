@@ -121,4 +121,4 @@ export default function Cart() {
   )
 }
 
-Cart.layout = (page) => page
+Cart.layout = (page) => page;

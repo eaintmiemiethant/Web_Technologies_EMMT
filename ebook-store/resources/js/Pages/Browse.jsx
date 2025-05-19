@@ -1,21 +1,20 @@
 // resources/js/Pages/Browse.jsx
-import React from 'react';
-import { Inertia } from '@inertiajs/inertia';
-import { Link } from '@inertiajs/inertia-react';
-import AppLayout from '@/Layouts/MainLayout';
+import React from 'react'
+import { Inertia } from '@inertiajs/inertia'
+import { router, Link, usePage } from '@inertiajs/react'   
+import AppLayout from '@/Layouts/MainLayout'
 
 export default function Browse({
   categories = [],
   ebooks = { data: [], links: [] },
   selectedCategory = '',
 }) {
-  // Called when category dropdown changes
   function onCategoryChange(e) {
-    Inertia.get(
-      '/browse',
+    router.get(
+      route('browse'),                   
       { category: e.target.value },
       { preserveState: true }
-    );
+    )
   }
 
   return (
@@ -60,8 +59,10 @@ export default function Browse({
                   ? 'Free'
                   : `$${Number(book.price).toFixed(2)}`}
               </p>
+
+              {/* use named route for the detail link */}
               <Link
-                href={`/ebooks/${book.id}`}
+                href={route('ebooks.show', book.id)}
                 className="mt-auto text-center bg-primary text-white py-2 rounded hover:bg-primary-dark transition"
               >
                 View Details
@@ -87,9 +88,11 @@ export default function Browse({
                 disabled={!link.url}
                 className={`
                   whitespace-nowrap px-3 py-1 border rounded
-                  ${link.active
-                    ? 'bg-primary text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-100'}
+                  ${
+                    link.active
+                      ? 'bg-primary text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-100'
+                  }
                   disabled:opacity-50
                 `}
                 dangerouslySetInnerHTML={{ __html: link.label }}
@@ -99,7 +102,7 @@ export default function Browse({
         </div>
       )}
     </div>
-  );
+  )
 }
 
-Browse.layout = (page) => <AppLayout>{page}</AppLayout>;
+Browse.layout = (page) => <AppLayout>{page}</AppLayout>

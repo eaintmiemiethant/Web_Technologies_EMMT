@@ -85,3 +85,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
      Route::get('/orders',         [OrderController::class, 'index'])->name('orders.index');
      Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 });
+
+// Webhook for Stripe to call
+Route::post('/webhook/stripe', [CheckoutController::class, 'webhook'])
+     ->name('stripe.webhook');  
